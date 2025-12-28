@@ -18,4 +18,3 @@ app.get('/health', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Servidor MARQUEI rodando em http://localhost:${PORT}`);
 });
-

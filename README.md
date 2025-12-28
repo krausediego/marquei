@@ -52,6 +52,7 @@ pnpm --filter @marquei/mobile start
 ## 📦 Apps
 
 ### Backend (`apps/backend`)
+
 - **Stack**: Node.js, Express, TypeScript
 - **Porta**: 3001
 - **Comandos**:
@@ -60,6 +61,7 @@ pnpm --filter @marquei/mobile start
   - `pnpm --filter @marquei/backend start` - Executar build de produção
 
 ### Web (`apps/web`)
+
 - **Stack**: React, Vite, TypeScript
 - **Porta**: 5173
 - **Comandos**:
@@ -68,6 +70,7 @@ pnpm --filter @marquei/mobile start
   - `pnpm --filter @marquei/web preview` - Preview do build
 
 ### Mobile (`apps/mobile`)
+
 - **Stack**: React Native, Expo, TypeScript
 - **Comandos**:
   - `pnpm --filter @marquei/mobile start` - Iniciar Expo

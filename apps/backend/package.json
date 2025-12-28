@@ -2,6 +2,7 @@
   "name": "@marquei/backend",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -14,11 +15,12 @@
     "express": "^4.21.2"
   },
   "devDependencies": {
+    "@marquei/eslint-config": "workspace:*",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.2",
+    "eslint": "^9.39.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
 }
-

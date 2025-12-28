@@ -4,6 +4,6 @@ import { config } from '@marquei/eslint-config/react-internal';
 export default [
   ...config,
   {
-    ignores: ['dist/**'],
+    ignores: ['.expo/**', 'android/**', 'ios/**'],
   },
 ];
