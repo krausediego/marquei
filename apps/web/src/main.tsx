@@ -1,10 +1,22 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import './index.css';
-import App from './App.tsx';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { keycloak } from "./auth/keycloak";
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+async function bootstrap() {
+  // "check-sso" não força login automático.
+  // Se você quiser que sempre obrigue login, troque para "login-required".
+  await keycloak.init({
+    onLoad: "check-sso",
+    pkceMethod: "S256",
+    checkLoginIframe: false,
+  });
+
+  ReactDOM.createRoot(document.getElementById("root")!).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+}
+
+bootstrap();
