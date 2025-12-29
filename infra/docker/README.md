@@ -72,3 +72,5 @@ postgresql://marquei:marquei123@localhost:5432/marquei
 | POSTGRES_PASSWORD | marquei123   | PostgreSQL password   |
 | POSTGRES_DB       | marquei      | PostgreSQL database   |
 
+
+

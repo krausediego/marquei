@@ -7,3 +7,5 @@ export default [
     ignores: ['.expo/**', 'android/**', 'ios/**'],
   },
 ];
+
+

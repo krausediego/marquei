@@ -11,8 +11,10 @@
     "lint": "eslint src/"
   },
   "dependencies": {
+    "@prisma/client": "^7.2.0",
     "cors": "^2.8.5",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "@marquei/eslint-config": "workspace:*",
@@ -20,6 +22,7 @@
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.2",
     "eslint": "^9.39.1",
+    "prisma": "^7.2.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
