@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@marquei/eslint-config": "workspace:*",
-    "@types/cors": "^2.8.17",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.2",
     "cross-env": "^10.1.0",

@@ -3,6 +3,7 @@ import { globSync } from 'fs';
 import 'express-async-errors';
 import { Server } from 'http';
 import path from 'path';
+import cors from 'cors';
 import { fileURLToPath, pathToFileURL } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -26,6 +27,7 @@ export class App {
 
   setupEnvironment(): this {
     this.app.use(express.json());
+    this.app.use(cors())
     return this;
   }
 

@@ -4,10 +4,6 @@ import { ILoggingManager, ok, getHttpError, Http, ForbiddenError } from '@/infra
 import { KeycloakEnv as env } from '@/infra/config';
 import { IMiddleware } from '@/routes/middlewares';
 
-const AUTHORIZATION_HEADER_NOT_PROVIDED = 'Authorization header was not provided.';
-const INVALID_AUTHORIZATION_HEADER = 'Authorization header is invalid.';
-const UNAUTHORIZED = 'Unauthorized.';
-
 const jwks = createRemoteJWKSet(
   new URL(`${env.keycloakBaseUrl}/realms/${env.keycloakRealm}/protocol/openid-connect/certs`)
 );
@@ -24,29 +20,33 @@ export class AuthClientKeycloakMiddleware implements IMiddleware {
 
   async handle(params: Http.IRequest<{ authorization: string }>): Promise<Http.IResponse> {
     const { traceId } = params.locals || {};
-    const { authorization } = params.data;
+    const authorization = params.data.authorization || params.data['authorization'];
 
     try {
       if (!authorization) {
-        return getHttpError(new ForbiddenError(AUTHORIZATION_HEADER_NOT_PROVIDED));
+        this.logger.warn({ traceId }, 'Authorization header not provided.');
+        return getHttpError(new ForbiddenError('Token de autorização não fornecido', 3001));
       }
 
       const [authPrefix, authToken] = authorization.split(' ');
 
       if (authPrefix !== 'Bearer' || !authToken) {
-        return getHttpError(new ForbiddenError(INVALID_AUTHORIZATION_HEADER));
+        this.logger.writeLog('warn', 'Invalid authorization header format.', { traceId });
+        return getHttpError(new ForbiddenError('Formato de token inválido', 3002));
       }
 
       const issuer = `${env.keycloakBaseUrl}/realms/${env.keycloakRealm}`;
+      const validAudiences = [env.keycloakAudience, 'account'];
 
       const { payload } = await jwtVerify<KeycloakAccessPayload>(authToken, jwks, {
         issuer,
-        audience: env.keycloakAudience,
+        audience: validAudiences,
       });
 
       const clientId = payload.sub;
       if (!clientId) {
-        return getHttpError(new ForbiddenError(UNAUTHORIZED));
+        this.logger.writeLog('warn', 'Token payload missing subject (sub).', { traceId });
+        return getHttpError(new ForbiddenError('Token inválido: identificador do cliente não encontrado', 3003));
       }
 
       const email = payload.email;
@@ -60,8 +60,29 @@ export class AuthClientKeycloakMiddleware implements IMiddleware {
         },
       });
     } catch (error: any) {
-      this.logger.warn({ traceId }, error?.message);
-      return getHttpError(new ForbiddenError(UNAUTHORIZED));
+      this.logger.writeLog('error', 'JWT verification failed.', {
+        traceId,
+        errorMessage: error?.message,
+        errorCode: error?.code,
+      });
+
+      if (error?.code === 'ERR_JWT_EXPIRED') {
+        return getHttpError(new ForbiddenError('Token expirado', 3004));
+      }
+      if (error?.code === 'ERR_JWT_INVALID') {
+        return getHttpError(new ForbiddenError('Token inválido', 3005));
+      }
+      if (error?.code === 'ERR_JWT_CLAIM_VALIDATION_FAILED') {
+        const claimMessage = error?.claim === 'iss'
+          ? 'Token inválido: issuer não corresponde'
+          : error?.claim === 'aud'
+          ? 'Token inválido: audience não corresponde'
+          : `Token inválido: validação de claims falhou (${error?.claim || 'desconhecido'})`;
+        
+        return getHttpError(new ForbiddenError(claimMessage, 3006));
+      }
+
+      return getHttpError(new ForbiddenError('Não autorizado', 3007));
     }
   }
 }
